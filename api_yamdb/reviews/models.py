@@ -22,4 +22,11 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
-    pass
+    review = models.ForeignKey(
+        Review,
+        verbose_name='Отзыв',
+        on_delete=models.CASCADE,
+        related_name='comments'
+    )
+
+
