@@ -5,17 +5,16 @@ from django.http import HttpResponse
 from django.core.mail import send_mail
 
 # from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, permissions, mixins, filters
-
-#from reviews.models import Review, Comment
+from rest_framework import viewsets, permissions, filters
+from reviews.models import Category, Genre, Title, Review, Comment
 from users.models import User
-from .serializers import (UserSerializer)
-
-
-class CreateListViewSet(mixins.CreateModelMixin,
-                        mixins.ListModelMixin,
-                        viewsets.GenericViewSet):
-    pass
+from .serializers import (CategorySerializer,
+                          GenreSerializer,
+                          TitleSerializer,
+                          UserSerializer
+                          )
+from .mixins import CreateListDestroyViewSet, CreateListViewSet
+from .filters import TitleFilter
 
 
 class UserViewSet(CreateListViewSet):
@@ -51,3 +50,26 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     pass
+
+
+class CategoryViewSet(CreateListDestroyViewSet):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
+    # permission_classes =     "Просмотр доступен для всех пользователей, удаление - Админ"
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+
+
+class GenreViewSet(CreateListDestroyViewSet):
+    serializer_class = GenreSerializer
+    queryset = Genre.objects.all()
+    # permission_classes =     "Просмотр доступен для всех пользователей, удаление - Админ"
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    serializer_class = TitleSerializer
+    queryset = Title.objects.all()
+    # permission_classes =     "Просмотр доступен для всех пользователей, частичное обновление инфы и удаление - Админ"
+    filter_backends = (TitleFilter,)
