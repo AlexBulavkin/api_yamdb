@@ -12,3 +12,11 @@ class UserSerializer(serializers.ModelSerializer):
             'username', 'email', 'first_name', 'last_name', 'bio', 'role'
         )
         required_fields = ('username', 'email')
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    pass
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    pass

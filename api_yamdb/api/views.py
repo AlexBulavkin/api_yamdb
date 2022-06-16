@@ -7,6 +7,7 @@ from django.core.mail import send_mail
 # from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, permissions, mixins, filters
 
+#from reviews.models import Review, Comment
 from users.models import User
 from .serializers import (UserSerializer)
 
@@ -42,3 +43,11 @@ def email(request):
         ['to@example.com'],   # Это поле "Кому" (можно указать список адресов)
     )
     return HttpResponse('check your mailbox')
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    pass
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    pass
