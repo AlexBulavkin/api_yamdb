@@ -9,7 +9,11 @@ from . import views
 
 
 router = DefaultRouter()
-router.register(r'users', views.UserViewSet)
+router.register(r'users', views.UserViewSet, basename='user')
+router.register('categories', views.CategoryViewSet, basename='category')
+router.register('genres', views.GenreViewSet, basename='genre')
+router.register('titles', views.TitleViewSet, basename='title')
+
 
 urlpatterns = [
     path('email/', views.email, name='email'),  # временный эксперимент с почтой
