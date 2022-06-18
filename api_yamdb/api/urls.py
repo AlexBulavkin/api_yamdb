@@ -16,8 +16,8 @@ router.register('titles', views.TitleViewSet, basename='title')
 
 
 urlpatterns = [
-    path('email/', views.email, name='email'),  # временный эксперимент с почтой
     path('', include(router.urls)),
+    path('auth/signup/', views.registration, name='signup'),
     path(
         'auth/token/',
         TokenObtainPairView.as_view(),

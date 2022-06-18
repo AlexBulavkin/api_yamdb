@@ -10,7 +10,7 @@ CHOICES_ROLES = (
 
 class User(AbstractUser):
     username = models.CharField(blank=False, unique=True, max_length=150)
-    email = models.CharField(blank=False, unique=True, max_length=254)
+    email = models.EmailField(blank=False, unique=True, max_length=254)
     first_name = models.CharField(blank=True, max_length=150)
     last_name = models.CharField(blank=True, max_length=150)
     bio = models.TextField(
@@ -21,3 +21,4 @@ class User(AbstractUser):
         default='user',
         max_length=16,
         choices=CHOICES_ROLES)
+    confirmation_code = models.SlugField()
