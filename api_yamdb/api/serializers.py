@@ -1,4 +1,3 @@
-from unicodedata import name
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
@@ -17,6 +16,12 @@ class UserSerializer(serializers.ModelSerializer):
             'username', 'email', 'first_name', 'last_name', 'bio', 'role'
         )
         required_fields = ('username', 'email')
+
+    def validate_username(self, value):
+        invalid_username = 'me'
+        if value == invalid_username:
+            raise serializers.ValidationError('Недопустимый username')
+        return value
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -96,3 +101,21 @@ class TitleSerializer(serializers.ModelSerializer):
         model = Title
         fields = '__all__'
         required_fields = ('name',)
+
+
+class AuthUserSerializer(serializers.ModelSerializer):
+    """Сериалайзер для процедуры регистрации."""
+    confirmation_code = serializers.HiddenField(default='')
+
+    class Meta:
+        model = User
+        fields = (
+            'username', 'email', 'confirmation_code'
+        )
+        required_fields = ('username', 'email')
+
+    def validate_username(self, value):
+        invalid_username = 'me'
+        if value == invalid_username:
+            raise serializers.ValidationError('Недопустимый username')
+        return value
