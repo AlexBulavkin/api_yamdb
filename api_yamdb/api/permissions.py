@@ -17,9 +17,4 @@ class PatchUsersPermission(permissions.BasePermission):
             request.user.is_authenticated)
 
     def has_object_permission(self, request, view, obj):
-        if obj.role is not None:
-            return(
-                request.user.role == 'admin'
-                and obj.username == request.user.username
-            )
         return obj.username == request.user.username

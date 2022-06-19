@@ -23,6 +23,13 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Недопустимый username')
         return value
 
+    def validate(self, data):
+        request = self.context.get("request")
+        user = request.user
+        if (request.method == 'PATCH' and user.role != 'admin'):
+            data['role'] = user.role
+        return data
+
 
 class ReviewSerializer(serializers.ModelSerializer):
     """Сериалайзер модели Review"""
