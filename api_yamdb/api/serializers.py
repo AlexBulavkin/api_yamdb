@@ -119,3 +119,8 @@ class AuthUserSerializer(serializers.ModelSerializer):
         if value == invalid_username:
             raise serializers.ValidationError('Недопустимый username')
         return value
+
+
+class TokenSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    confirmation_code = serializers.CharField(required=True)
