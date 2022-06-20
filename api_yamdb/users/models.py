@@ -69,3 +69,6 @@ class User(AbstractUser):
 
     objects = UserManager()
     USERNAME_FIELD = 'username'
+
+    class Meta:
+        ordering = ['-id']
