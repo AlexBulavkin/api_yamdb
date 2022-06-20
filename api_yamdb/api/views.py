@@ -20,7 +20,7 @@ from .serializers import (CategorySerializer,
 from .mixins import CreateListDestroyViewSet
 from .filters import TitleFilter
 from .permissions import (PostUsersPermission,
-                          PatchUsersPermission)
+                          PatchUsersPermission, ReadOnly)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -93,21 +93,31 @@ class CommentViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(CreateListDestroyViewSet):
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
-    # permission_classes =     "Просмотр доступен для всех пользователей, удаление - Админ"
+    permission_classes = (PostUsersPermission,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+
+    def get_permissions(self):
+        if self.action == 'list':
+            return (ReadOnly(),)
+        return super().get_permissions()
 
 
 class GenreViewSet(CreateListDestroyViewSet):
     serializer_class = GenreSerializer
     queryset = Genre.objects.all()
-    # permission_classes =     "Просмотр доступен для всех пользователей, удаление - Админ"
+    permission_classes = (PostUsersPermission,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+
+    def get_permissions(self):
+        if self.action == 'list':
+            return (ReadOnly(),)
+        return super().get_permissions()
 
 
 class TitleViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerializer
     queryset = Title.objects.all()
-    # permission_classes =     "Просмотр доступен для всех пользователей, частичное обновление инфы и удаление - Админ"
+    permission_classes = (PostUsersPermission,)
     filter_backends = (TitleFilter,)
