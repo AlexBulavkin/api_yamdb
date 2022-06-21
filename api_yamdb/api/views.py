@@ -129,6 +129,11 @@ class CategoryViewSet(CreateListDestroyViewSet):
     search_fields = ('name',)
     lookup_field = 'slug'
 
+    def get_permissions(self):
+        if self.action == 'list':
+            return (ReadOnly(),)
+        return super().get_permissions()
+
 
 class GenreViewSet(CreateListDestroyViewSet):
     serializer_class = GenreSerializer
