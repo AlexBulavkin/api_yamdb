@@ -125,6 +125,7 @@ class CategoryViewSet(CreateListDestroyViewSet):
     permission_classes = (PostUsersPermission,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+    lookup_field = 'slug'
 
     def get_permissions(self):
         if self.action == 'list':
@@ -138,6 +139,7 @@ class GenreViewSet(CreateListDestroyViewSet):
     permission_classes = (PostUsersPermission,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+    lookup_field = 'slug'
 
     def get_permissions(self):
         if self.action == 'list':
