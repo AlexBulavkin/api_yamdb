@@ -61,7 +61,8 @@ class Title(models.Model):
 
 
 class GenreTitle(models.Model):
-    pass
+    title_id = models.ForeignKey(Title, on_delete=models.CASCADE)
+    genre_id = models.ForeignKey(Genre, on_delete=models.CASCADE)
 
 
 class Review(models.Model):
