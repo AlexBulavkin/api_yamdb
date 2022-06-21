@@ -3,10 +3,10 @@ from django.db import models
 
 
 class UserManager(BaseUserManager):
-    """ Менеджер для User """
+    """Менеджер для User."""
 
     def create_user(self, username, email, password=None, role='', bio=''):
-        """ Создает и возвращает пользователя с имэйлом и именем. """
+        """Создает и возвращает пользователя с имэйлом и именем."""
         if username is None:
             raise TypeError('Users must have a username.')
 
@@ -22,7 +22,7 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, username, email, password, role='', bio=''):
-        """ Создает и возввращает пользователя с привилегиями суперадмина. """
+        """Создает и возввращает пользователя с привилегиями суперадмина."""
         if password is None:
             raise TypeError('Superusers must have a password.')
 
@@ -42,24 +42,27 @@ CHOICES_ROLES = (
 
 
 class User(AbstractUser):
-    " Кастомная модель User"
+    """Кастомная модель User."""
     username = models.CharField(
+        'Username',
         db_index=True,
         blank=False,
         unique=True,
         max_length=150)
     email = models.EmailField(
+        'Электронная почта',
         db_index=True,
         blank=False,
         unique=True,
         max_length=254)
-    first_name = models.CharField(blank=True, max_length=150)
-    last_name = models.CharField(blank=True, max_length=150)
+    first_name = models.CharField('Имя', blank=True, max_length=150)
+    last_name = models.CharField('Фамилия', blank=True, max_length=150)
     bio = models.TextField(
         'Биография',
         blank=True,
     )
     role = models.CharField(
+        'Роль',
         default='user',
         max_length=16,
         choices=CHOICES_ROLES)
@@ -72,3 +75,4 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ['-id']
+        verbose_name_plural = 'Пользователи'

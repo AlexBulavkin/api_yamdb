@@ -3,7 +3,7 @@ import string
 
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, permissions, filters, status
+from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
@@ -41,11 +41,13 @@ class UserViewSet(viewsets.ModelViewSet):
     def me(self, request):
         user = User.objects.get(id=request.user.id)
         if request.method == 'PATCH':
-            serializer = self.get_serializer(user, data=request.data, partial=True)
+            serializer = self.get_serializer(user, data=request.data,
+                                             partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
         serializer = self.get_serializer(user)
         return Response(serializer.data)
 
