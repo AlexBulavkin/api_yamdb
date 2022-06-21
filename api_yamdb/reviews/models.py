@@ -39,7 +39,7 @@ class Title(models.Model):
     rating = models.PositiveSmallIntegerField(null=True,)
     genre = models.ManyToManyField(
         Genre,
-        # on_delete=models.SET_NULL,
+        through='GenreTitle',
         related_name='titles',
         blank=True,
     )

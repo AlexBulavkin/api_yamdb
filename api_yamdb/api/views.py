@@ -129,11 +129,6 @@ class CategoryViewSet(CreateListDestroyViewSet):
     search_fields = ('name',)
     lookup_field = 'slug'
 
-    def get_permissions(self):
-        if self.action == 'list':
-            return (ReadOnly(),)
-        return super().get_permissions()
-
 
 class GenreViewSet(CreateListDestroyViewSet):
     serializer_class = GenreSerializer
@@ -154,7 +149,8 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     permission_classes = (TitlesPermissions,)
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('name', 'year')
+    # filterset_fields = ('name', 'year')
+    filterset_class = TitleFilter
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):

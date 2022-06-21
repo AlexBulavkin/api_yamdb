@@ -5,7 +5,7 @@ from reviews.models import Title
 
 class TitleFilter(filters.FilterSet):
     category = filters.CharFilter(
-        field_name='categore__slug',
+        field_name='category__slug',
         lookup_expr='exact'
     )
     genre = filters.CharFilter(
@@ -16,7 +16,7 @@ class TitleFilter(filters.FilterSet):
         field_name='name',
         lookup_expr='contains'
     )
-    year = filters.RangeFilter()
+    # year = filters.RangeFilter()
 
     class Meta:
         model = Title
