@@ -27,7 +27,8 @@ from .permissions import (IsAdminModeratorOwnerOrReadOnly,
                           PostUsersPermission,
                           PatchUsersPermission,
                           ReadOnly,
-                          IsAdminModeratorOwnerOrReadOnly)
+                          IsAdminModeratorOwnerOrReadOnly,
+                          TitlesPermissions)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -151,7 +152,7 @@ class GenreViewSet(CreateListDestroyViewSet):
 class TitleViewSet(viewsets.ModelViewSet):
     # serializer_class = TitleSerializer
     queryset = Title.objects.all()
-    permission_classes = (PostUsersPermission,)
+    permission_classes = (TitlesPermissions,)
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('name', 'year')
 
