@@ -43,14 +43,6 @@ CHOICES_ROLES = (
 
 class User(AbstractUser):
     """Кастомная модель User."""
-    ADMIN = 'admin'
-    MODERATOR = 'moderator'
-    USER = 'user'
-    ROLES = [
-        (ADMIN, 'Administrator'),
-        (MODERATOR, 'Moderator'),
-        (USER, 'User'),
-    ]
     username = models.CharField(
         'Username',
         db_index=True,
@@ -77,14 +69,6 @@ class User(AbstractUser):
     confirmation_code = models.SlugField(blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
-    @property
-    def is_moderator(self):
-        return self.role == self.MODERATOR
-
-    @property
-    def is_admin(self):
-        return self.role == self.ADMIN
 
     objects = UserManager()
     USERNAME_FIELD = 'username'

@@ -4,6 +4,7 @@ from users.models import User
 
 
 class Category(models.Model):
+    """Модель Category."""
     name = models.CharField(max_length=50,)
     slug = models.SlugField(unique=True, max_length=50)
 
@@ -17,6 +18,7 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
+    """Модель Genre."""
     name = models.CharField(max_length=50,)
     slug = models.SlugField(unique=True, max_length=50)
 
@@ -30,6 +32,7 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
+    """Модель Title."""
     name = models.CharField(max_length=50, unique=True)
     year = models.PositiveSmallIntegerField(verbose_name='Дата выхода фильма',)
     description = models.TextField(
@@ -39,7 +42,7 @@ class Title(models.Model):
     rating = models.PositiveSmallIntegerField(null=True,)
     genre = models.ManyToManyField(
         Genre,
-        through='GenreTitle',
+        # through='GenreTitle',
         related_name='titles',
         blank=True,
     )
@@ -61,11 +64,13 @@ class Title(models.Model):
 
 
 class GenreTitle(models.Model):
+    """Модель GenreTitle."""
     title_id = models.ForeignKey(Title, on_delete=models.CASCADE)
     genre_id = models.ForeignKey(Genre, on_delete=models.CASCADE)
 
 
 class Review(models.Model):
+    """Модель GenreTitle."""
     title = models.ForeignKey(
         Title,
         verbose_name='Произведение',
@@ -107,6 +112,7 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
+    """Модель Comment."""
     review = models.ForeignKey(
         Review,
         verbose_name='Отзыв',
