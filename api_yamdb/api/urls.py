@@ -16,7 +16,7 @@ router.register(
 )
 router.register(
     r'titles/(?P<title_id>[\d+]+)/reviews/(?P<review_id>[\d+]+)/comments',
-    views.CommentViewSet, basename='coomments')
+    views.CommentViewSet, basename='comments')
 
 
 urlpatterns = [
