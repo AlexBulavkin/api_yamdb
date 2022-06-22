@@ -81,7 +81,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ('name', 'slug')
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -89,7 +89,7 @@ class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Genre
-        fields = '__all__'
+        fields = ('name', 'slug')
 
 
 class TitleListSerializer(serializers.ModelSerializer):
@@ -99,7 +99,13 @@ class TitleListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = '__all__'
+        fields = ('id',
+                  'name',
+                  'year',
+                  'rating',
+                  'description',
+                  'genre',
+                  'category')
         required_fields = ('name',)
 
 
@@ -117,7 +123,13 @@ class TitleCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = '__all__'
+        fields = ('id',
+                  'name',
+                  'year',
+                  'rating',
+                  'description',
+                  'genre',
+                  'category')
         required_fields = ('name',)
 
 
