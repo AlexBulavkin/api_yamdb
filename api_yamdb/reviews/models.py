@@ -42,9 +42,7 @@ class Title(models.Model):
     rating = models.PositiveSmallIntegerField(null=True,)
     genre = models.ManyToManyField(
         Genre,
-        # through='GenreTitle',
-        related_name='titles',
-        blank=True,
+        through='GenreTitle'
     )
     category = models.ForeignKey(
         Category,
@@ -65,8 +63,8 @@ class Title(models.Model):
 
 class GenreTitle(models.Model):
     """Модель GenreTitle."""
-    title_id = models.ForeignKey(Title, on_delete=models.CASCADE)
-    genre_id = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    title = models.ForeignKey(Title, on_delete=models.CASCADE)
 
 
 class Review(models.Model):
