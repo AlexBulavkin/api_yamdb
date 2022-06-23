@@ -29,7 +29,7 @@ class UserManager(BaseUserManager):
         user = self.create_user(username, email, password, role, bio)
         user.is_superuser = True
         user.is_staff = True
-        user.save()
+        user.save(using=self._db)
 
         return user
 
@@ -74,7 +74,7 @@ class User(AbstractUser):
         default='user',
         max_length=16,
         choices=CHOICES_ROLES)
-    
+
     @property
     def is_moderator(self):
         return self.role == self.MODERATOR
@@ -82,7 +82,7 @@ class User(AbstractUser):
     @property
     def is_admin(self):
         return self.role == self.ADMIN
-    
+
     confirmation_code = models.SlugField(blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

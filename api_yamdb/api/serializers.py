@@ -1,10 +1,12 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
 
 from reviews.models import Category, Genre, Title, Review, Comment
 
-from users.models import User
+
+User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -26,7 +28,7 @@ class UserSerializer(serializers.ModelSerializer):
     def validate(self, data):
         request = self.context.get("request")
         user = request.user
-        if (request.method == 'PATCH' and user.role != 'admin'):
+        if (request.method == 'PATCH' and not user.is_admin):
             data['role'] = user.role
         return data
 
@@ -155,5 +157,6 @@ class AuthUserSerializer(serializers.ModelSerializer):
 
 
 class TokenSerializer(serializers.Serializer):
+    """Сериалайзер для выдачи токена."""
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)

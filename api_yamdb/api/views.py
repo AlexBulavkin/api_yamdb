@@ -1,16 +1,18 @@
 import random
 import string
 
+from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, filters, status
+from rest_framework import viewsets, filters, status, permissions
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.decorators import action, api_view
+from rest_framework.views import APIView
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
-from reviews.models import Category, Genre, Title, Review, Comment
+from reviews.models import Category, Genre, Title, Review
 from users.models import User
 from .serializers import (CategorySerializer,
                           GenreSerializer,
@@ -24,12 +26,17 @@ from .serializers import (CategorySerializer,
                           )
 from .mixins import CreateListDestroyViewSet
 from .filters import TitleFilter
-from .permissions import (IsAdminModeratorOwnerOrReadOnly,
+from .permissions import (IsAdminModeratorAuthorOrReadOnly,
                           PostUsersPermission,
                           PatchUsersPermission,
                           ReadOnly,
-                          IsAdminModeratorOwnerOrReadOnly,
                           TitlesPermissions)
+
+
+User = get_user_model()
+
+
+CONFIRMATION_CODE_LEN = 8
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -56,32 +63,35 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-@api_view(['POST'])
-def registration(request):
-    CONFIRMATION_CODE_LEN = 8
-    allowed_chars = string.ascii_letters + string.digits
-    confirmation_code = (
-        ''.join(random.choice(allowed_chars) for _ in range(
-            CONFIRMATION_CODE_LEN))
-    )
-    serializer = AuthUserSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save(confirmation_code=confirmation_code)
-        user_email = serializer.data['email']
+class UserSignUp(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        serializer = AuthUserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.data['email']
+        username = serializer.data['username']
+        user, created = User.objects.get_or_create(email=email,
+                                                   username=username)
+        allowed_chars = string.ascii_letters + string.digits
+        confirmation_code = (
+            ''.join(random.choice(allowed_chars) for _ in range(
+                CONFIRMATION_CODE_LEN)))
         send_mail(
             'Welcome to YAMDB',
             f'your confirmation code: {confirmation_code}',
             'yamdb@yamdb.com',  # from
-            [user_email],  # to
+            [email],  # to
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])
-def get_jwt_token(request):
-    serializer = TokenSerializer(data=request.data)
-    if serializer.is_valid():
+class TokenView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        serializer = TokenSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         username = serializer.data.get('username')
         confirmation_code = serializer.data.get('confirmation_code')
         user = get_object_or_404(User, username=username)
@@ -90,12 +100,11 @@ def get_jwt_token(request):
             return Response({'token': f'{token}'}, status=status.HTTP_200_OK)
         return Response({'confirmation_code': 'Неверный код подтверждения'},
                         status=status.HTTP_400_BAD_REQUEST)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = [IsAdminModeratorOwnerOrReadOnly]
+    permission_classes = [IsAdminModeratorAuthorOrReadOnly]
 
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs.get("title_id"))
@@ -109,7 +118,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = [IsAdminModeratorOwnerOrReadOnly]
+    permission_classes = [IsAdminModeratorAuthorOrReadOnly]
 
     def get_queryset(self):
         review = get_object_or_404(Review, pk=self.kwargs.get("review_id"))
