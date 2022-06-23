@@ -2,6 +2,7 @@ import random
 import string
 
 from django.core.mail import send_mail
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, filters, status
 from django_filters.rest_framework import DjangoFilterBackend
@@ -13,8 +14,8 @@ from reviews.models import Category, Genre, Title, Review, Comment
 from users.models import User
 from .serializers import (CategorySerializer,
                           GenreSerializer,
-                          TitleListSerializer,
-                          TitleCreateSerializer,
+                          TitleSerializer,
+                          ReadOnlyTitleSerializer,
                           UserSerializer,
                           AuthUserSerializer,
                           TokenSerializer,
@@ -150,14 +151,15 @@ class GenreViewSet(CreateListDestroyViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    # serializer_class = TitleSerializer
-    queryset = Title.objects.all()
+    queryset = Title.objects.all().annotate(
+        Avg("reviews__score")
+    ).order_by("name")
+    serializer_class = TitleSerializer
     permission_classes = (TitlesPermissions,)
-    filter_backends = (DjangoFilterBackend,)
-    # filterset_fields = ('name', 'year')
+    filter_backends = [DjangoFilterBackend]
     filterset_class = TitleFilter
 
     def get_serializer_class(self):
-        if self.action in ('list', 'retrieve'):
-            return TitleListSerializer
-        return TitleCreateSerializer
+        if self.action in ("retrieve", "list"):
+            return ReadOnlyTitleSerializer
+        return TitleSerializer
