@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
+from django.conf import settings
 from rest_framework import viewsets, filters, status, permissions
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
@@ -80,7 +81,7 @@ class UserSignUp(APIView):
         send_mail(
             'Welcome to YAMDB',
             f'your confirmation code: {confirmation_code}',
-            'yamdb@yamdb.com',  # from
+            settings.DEFAULT_FROM_EMAIL,
             [email],  # to
         )
         return Response(serializer.data, status=status.HTTP_200_OK)

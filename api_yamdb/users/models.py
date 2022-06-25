@@ -84,8 +84,6 @@ class User(AbstractUser):
         return self.role == self.ADMIN
 
     confirmation_code = models.SlugField(blank=True)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
 
     objects = UserManager()
     USERNAME_FIELD = 'username'

@@ -16,7 +16,6 @@ class TitleFilter(filters.FilterSet):
         field_name='name',
         lookup_expr='contains'
     )
-    # year = filters.RangeFilter()
 
     class Meta:
         model = Title
