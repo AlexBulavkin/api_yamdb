@@ -28,10 +28,9 @@ from .serializers import (CategorySerializer,
 from .mixins import CreateListDestroyViewSet
 from .filters import TitleFilter
 from .permissions import (IsAdminModeratorAuthorOrReadOnly,
-                          PostUsersPermission,
-                          PatchUsersPermission,
-                          ReadOnly,
-                          TitlesPermissions)
+                          IsAdmin,
+                          IsMe,
+                          IsAdminOrReadOnly)
 
 
 User = get_user_model()
@@ -44,12 +43,12 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_field = 'username'
-    permission_classes = (PostUsersPermission,)
+    permission_classes = (IsAdmin,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
 
     @action(methods=['get', 'patch'],
-            detail=False, permission_classes=[PatchUsersPermission])
+            detail=False, permission_classes=[IsMe])
     def me(self, request):
         user = User.objects.get(id=request.user.id)
         if request.method == 'PATCH':
@@ -82,7 +81,7 @@ class UserSignUp(APIView):
             'Welcome to YAMDB',
             f'your confirmation code: {confirmation_code}',
             settings.DEFAULT_FROM_EMAIL,
-            [email],  # to
+            [email]
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -135,29 +134,19 @@ class CommentViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(CreateListDestroyViewSet):
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
-    permission_classes = (PostUsersPermission,)
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
-
-    def get_permissions(self):
-        if self.action == 'list':
-            return (ReadOnly(),)
-        return super().get_permissions()
 
 
 class GenreViewSet(CreateListDestroyViewSet):
     serializer_class = GenreSerializer
     queryset = Genre.objects.all()
-    permission_classes = (PostUsersPermission,)
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
-
-    def get_permissions(self):
-        if self.action == 'list':
-            return (ReadOnly(),)
-        return super().get_permissions()
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -165,7 +154,7 @@ class TitleViewSet(viewsets.ModelViewSet):
         Avg("reviews__score")
     ).order_by("name")
     serializer_class = TitleSerializer
-    permission_classes = (TitlesPermissions,)
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = [DjangoFilterBackend]
     filterset_class = TitleFilter
 

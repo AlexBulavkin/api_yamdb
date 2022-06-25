@@ -1,7 +1,7 @@
 from rest_framework import permissions
 
 
-class PostUsersPermission(permissions.BasePermission):
+class IsAdmin(permissions.BasePermission):
 
     def has_permission(self, request, view):
         return (
@@ -10,7 +10,7 @@ class PostUsersPermission(permissions.BasePermission):
             or request.user.is_superuser)
 
 
-class PatchUsersPermission(permissions.BasePermission):
+class IsMe(permissions.BasePermission):
 
     def has_permission(self, request, view):
         return (
@@ -18,12 +18,6 @@ class PatchUsersPermission(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return obj.username == request.user.username
-
-
-class ReadOnly(permissions.BasePermission):
-
-    def has_permission(self, request, view):
-        return request.method in permissions.SAFE_METHODS
 
 
 class IsAdminModeratorAuthorOrReadOnly(permissions.BasePermission):
@@ -38,7 +32,7 @@ class IsAdminModeratorAuthorOrReadOnly(permissions.BasePermission):
                 or obj.author == request.user)
 
 
-class TitlesPermissions(permissions.BasePermission):
+class IsAdminOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         return (request.method in permissions.SAFE_METHODS
                 or (request.user.is_authenticated and (
