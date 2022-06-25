@@ -5,7 +5,7 @@ from users.models import User
 
 class Category(models.Model):
     """Модель Category."""
-    name = models.CharField(max_length=50,)
+    name = models.CharField('Название категории', max_length=50,)
     slug = models.SlugField(unique=True, max_length=50)
 
     def __str__(self):
@@ -19,7 +19,7 @@ class Category(models.Model):
 
 class Genre(models.Model):
     """Модель Genre."""
-    name = models.CharField(max_length=50,)
+    name = models.CharField('Название жанра', max_length=50,)
     slug = models.SlugField(unique=True, max_length=50)
 
     def __str__(self):
@@ -33,42 +33,44 @@ class Genre(models.Model):
 
 class Title(models.Model):
     """Модель Title."""
-    name = models.CharField(max_length=50, unique=True)
-    year = models.PositiveSmallIntegerField(verbose_name='Дата выхода фильма',)
-    description = models.TextField(
-        max_length=300,
-        verbose_name='Описание фильма'
-    )
-    rating = models.PositiveSmallIntegerField(null=True,)
-    genre = models.ManyToManyField(
-        Genre,
-        through='GenreTitle'
-    )
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.SET_NULL,
-        related_name='titles',
-        blank=True,
-        null=True
-    )
+    name = models.CharField('Название произведения',
+                            max_length=50,
+                            unique=True)
+    year = models.PositiveSmallIntegerField('Дата выхода произведения')
+    description = models.TextField('Описание произведения', max_length=300)
+    rating = models.PositiveSmallIntegerField('Рейтинг произведения',
+                                              null=True,)
+    genre = models.ManyToManyField(Genre,
+                                   verbose_name='Жанр',
+                                   through='GenreTitle')
+    category = models.ForeignKey(Category,
+                                 verbose_name='Категория',
+                                 on_delete=models.SET_NULL,
+                                 related_name='titles',
+                                 blank=True,
+                                 null=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = 'Тип произведения'
-        verbose_name_plural = 'Тип произведений'
+        verbose_name = 'Произведение'
+        verbose_name_plural = 'Произведения'
         ordering = ['-id']
 
 
 class GenreTitle(models.Model):
     """Модель GenreTitle."""
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
-    title = models.ForeignKey(Title, on_delete=models.CASCADE)
+    genre = models.ForeignKey(Genre,
+                              verbose_name='Жанр',
+                              on_delete=models.CASCADE)
+    title = models.ForeignKey(Title,
+                              verbose_name='Произведение',
+                              on_delete=models.CASCADE)
 
 
 class Review(models.Model):
-    """Модель GenreTitle."""
+    """Модель Review."""
     title = models.ForeignKey(
         Title,
         verbose_name='Произведение',
@@ -85,7 +87,7 @@ class Review(models.Model):
         related_name='reviews'
     )
     score = models.PositiveSmallIntegerField(
-        verbose_name='Рейтинг',
+        verbose_name='Оценка',
         validators=[
             MinValueValidator(1, 'Значения в диапазоне от 1 до 10'),
             MaxValueValidator(10, 'Значения в диапазоне от 1 до 10')
